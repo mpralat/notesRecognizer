@@ -38,7 +38,8 @@ class Bar:
         array_copy = array.copy()
         for row in range(1, height - 1):
             for col in range(1, width - 1):
-                if (array_copy[row][col - 1] == 0 and array_copy[row][col + 1] == 0) and not (array_copy[row - 1][col] == 255 and array_copy[row + 1][col] == 255):
+                if (array_copy[row][col - 1] == 0 and array_copy[row][col + 1] == 0)\
+                        and not (array_copy[row - 1][col] == 255 and array_copy[row + 1][col] == 255):
                     array[row][col] = 0
                     if array_copy[row][col] != array[row][col]:
                         print(row, col)
@@ -62,11 +63,11 @@ class Bar:
         cv2.imwrite("output/negate.png", processed_bar)
         return processed_bar
 
-    '''
-    detects blobs with given parameters.
-    https://www.learnopencv.com/blob-detection-using-opencv-python-c/
-    '''
     def detect_blobs(self):
+        """
+        detects blobs with given parameters.
+        https://www.learnopencv.com/blob-detection-using-opencv-python-c/
+        """
         # im_with_blobs = self.image.copy()
         # image = cv2.imread('input/notes2.jpg', cv2.IMREAD_GRAYSCALE)
         im_with_blobs = self.image_original.copy()
@@ -106,7 +107,6 @@ class Bar:
         horizontal_lines = cv2.morphologyEx(self.negated_image, cv2.MORPH_OPEN, kernel)
         cv2.imwrite("output/lines_vertical.png", horizontal_lines)
         return horizontal_lines
-
 
     def detect_lines(self):
         edges = cv2.Canny(self.horizontal_lines, 130, 200)
