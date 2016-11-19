@@ -1,5 +1,4 @@
 from bar import *
-import cv2
 
 
 def main():
