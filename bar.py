@@ -16,9 +16,46 @@ class Bar:
         self.horizontal_lines = self.detect_horizontal_lines()
         self.lines = self.detect_lines_basic(column=0)
 
+    def preprocess(self):
+        image = cv2.morphologyEx(self.image, cv2.MORPH_OPEN, kernel=(1, 1))
+        cv2.imwrite("output/preprocess.png", image)
+        return self.image
+
+    def restore_lines(self, array):
+        for idx, row in enumerate(array):
+            white_count = 0
+            for pixel in row:
+                if pixel == 255:
+                    white_count += 1
+            if white_count > (3/4) * len(row):
+                array[idx] = 255
+
+    def remove_lines_noise(self, array):
+        height, width = array.shape
+        array_copy = array.copy()
+        for row in range(1, height - 1):
+            for col in range(1, width - 1):
+                if (array_copy[row][col - 1] == 0 and array_copy[row][col + 1] == 0) and not (array_copy[row - 1][col] == 255 and array_copy[row + 1][col] == 255):
+                    array[row][col] = 0
+                    if array_copy[row][col] != array[row][col]:
+                        print(row, col)
+
+    def restore_notes(self, array):
+        height, width = array.shape
+        array_copy = array.copy()
+        for row in range(1, height - 1):
+            for col in range(1, width - 1):
+                if array_copy[row - 1][col] == 255 and array_copy[row + 1][col] == 255:
+                    array[row][col] = 255
+                    if array_copy[row][col] != array[row][col]:
+                        print(row, col)
+
     def negate(self):
-        processed_bar = cv2.adaptiveThreshold((255 - self.image), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                              cv2.THRESH_BINARY, 15, -2)
+        processed_bar = cv2.adaptiveThreshold((255 - self.image), 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 25, -30)
+        # _, processed_bar = cv2.threshold((255 - self.image), 100, 255, cv2.THRESH_BINARY | cv2.THRESH_TOZERO)
+        self.restore_lines(processed_bar)
+        self.remove_lines_noise(processed_bar)
+        self.restore_notes(processed_bar)
         cv2.imwrite("output/negate.png", processed_bar)
         return processed_bar
 

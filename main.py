@@ -2,7 +2,7 @@ from bar import *
 
 
 def main():
-    image = cv2.imread('input/notes1.jpg', cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread('input/notes2.jpg', cv2.IMREAD_GRAYSCALE)
     bar = Bar(0, image)
 
 
