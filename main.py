@@ -4,8 +4,7 @@ import scipy.misc
 
 
 def main():
-    image = cv2.imread('input/notes3.jpg')
-
+    image = cv2.imread('input/notes1.jpg')
     bar = Bar(0, image)
 
 

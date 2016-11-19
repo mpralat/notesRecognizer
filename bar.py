@@ -42,9 +42,9 @@ class Bar:
         # params.minCircularity = 0.4
         # params.filterByConvexity = True
         # params.minConvexity = 0.95
-        params.filterByArea = True
-        params.minArea = 20
-
+        # params.filterByArea = True
+        # params.minArea = 20
+        #
         params.filterByConvexity = True
         params.minConvexity = 0.9
 
@@ -52,9 +52,9 @@ class Bar:
         keypoints = detector.detect(self.image)
         for k in keypoints:
             print(k)
-        cv2.drawKeypoints(self.image, keypoints=keypoints, outImage=im_with_blobs, color=(255, 255, 1),
+        cv2.drawKeypoints(self.image, keypoints=keypoints, outImage=im_with_blobs, color=(0, 255, 1),
                           flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-        scipy.misc.imsave('outfile17.jpg', im_with_blobs)
+        scipy.misc.imsave('output/outfile_blob.jpg', im_with_blobs)
         return keypoints
 
     def detect_horizontal_lines(self):
@@ -68,7 +68,6 @@ class Bar:
         kernel = cv2.getStructuringElement(ksize=(1, int(self.negated_image.shape[0] / 15)), shape=cv2.MORPH_RECT)
         horizontal_lines = cv2.morphologyEx(self.negated_image, cv2.MORPH_OPEN, kernel)
         cv2.imwrite("output/lines_vertical.png", horizontal_lines)
-
         return horizontal_lines
 
     def detect_lines(self):
