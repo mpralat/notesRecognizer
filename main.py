@@ -1,6 +1,5 @@
 from bar import *
 import cv2
-import scipy.misc
 
 
 def main():
