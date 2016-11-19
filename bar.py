@@ -11,7 +11,8 @@ class Bar:
     """
     def __init__(self, idx, image):
         self.idx = idx
-        self.image = image
+        self.image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        self.image_original = image
         self.negated_image = self.negate()
         self.vertical_lines = self.detect_vertical_lines()
         self.horizontal_lines = self.detect_horizontal_lines()
@@ -31,25 +32,29 @@ class Bar:
     def detect_blobs(self):
         # im_with_blobs = self.image.copy()
         # image = cv2.imread('input/notes2.jpg', cv2.IMREAD_GRAYSCALE)
-        print(self.image)
-        im_with_blobs = self.image.copy()
+        im_with_blobs = self.image_original.copy()
         params = cv2.SimpleBlobDetector_Params()
-
+        #
+        # params.filterByArea = True
+        # params.minArea = 20
+        #
+        # params.filterByCircularity = True
+        # params.minCircularity = 0.4
+        # params.filterByConvexity = True
+        # params.minConvexity = 0.95
         params.filterByArea = True
         params.minArea = 20
 
-        params.filterByCircularity = True
-        params.minCircularity = 0.4
         params.filterByConvexity = True
-        params.minConvexity = 0.95
+        params.minConvexity = 0.9
 
         detector = cv2.SimpleBlobDetector_create(params)
         keypoints = detector.detect(self.image)
         for k in keypoints:
             print(k)
-        cv2.drawKeypoints(im_with_blobs, keypoints=keypoints, outImage=im_with_blobs, color=(1, 1, 1),
+        cv2.drawKeypoints(self.image, keypoints=keypoints, outImage=im_with_blobs, color=(255, 255, 1),
                           flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-        scipy.misc.imsave('outfile.jpg', im_with_blobs)
+        scipy.misc.imsave('outfile17.jpg', im_with_blobs)
         return keypoints
 
     def detect_horizontal_lines(self):
