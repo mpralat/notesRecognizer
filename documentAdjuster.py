@@ -5,22 +5,6 @@ from bar import *
 import sys
 import math
 
-
-def rectify(h):
-    h = h.reshape((4, 2))
-    hnew = np.zeros((4, 2), dtype=np.float32)
-
-    add = h.sum(1)
-    hnew[0] = h[np.argmin(add)]
-    hnew[2] = h[np.argmax(add)]
-
-    diff = np.diff(h, axis=1)
-    hnew[1] = h[np.argmin(diff)]
-    hnew[3] = h[np.argmax(diff)]
-
-    return hnew
-
-
 def distance(point1, point2):
     return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
