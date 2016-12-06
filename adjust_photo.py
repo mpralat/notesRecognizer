@@ -1,9 +1,7 @@
 import cv2
 import numpy as np
-from line import *
-from bar import *
 import sys
-import math
+
 
 def distance(point1, point2):
     return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
