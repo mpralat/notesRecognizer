@@ -27,12 +27,10 @@ def distance(point1, point2):
 
 def main(image):
     gray = cv2.cvtColor(image.copy(), cv2.COLOR_RGB2GRAY)
-    # blurred = cv2.GaussianBlur(gray, (5, 5), 0)
 
     edged = cv2.Canny(gray, 0, 50)
 
     _, contours, _ = cv2.findContours(edged, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-    # print(contours)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
     for cnt in contours:
@@ -47,7 +45,6 @@ def main(image):
         print("Couldn't find a paper sheet in the picture!")
         sys.exit()
 
-    # approx = sheet.reshape((4,2))
     approx = np.asarray([x[0] for x in sheet.astype(dtype=np.float32)])
 
     # tl has the smallest sum, br- the biggest
@@ -58,7 +55,6 @@ def main(image):
 
     max_width = int(max(distance(bottom_right, bottom_left), distance(top_right, top_left)))
     max_height = int(max(distance(top_right, bottom_right), distance(top_left, bottom_left)))
-
 
     arr = np.array([
         [0, 0],
@@ -75,7 +71,7 @@ def main(image):
     cv2.imwrite("with_contours.png", image)
     dst = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
 
-    ret2, th4 = cv2.threshold(dst, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    _, result = cv2.threshold(dst, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    cv2.imwrite("threshold.png", th4)
-    return th4
+    cv2.imwrite("threshold.png", result)
+    return result
