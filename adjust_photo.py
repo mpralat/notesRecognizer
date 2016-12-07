@@ -1,6 +1,7 @@
+import sys
+
 import cv2
 import numpy as np
-import sys
 
 
 def distance(point1, point2):
@@ -23,17 +24,17 @@ def main(image):
             sheet = approx
             break
 
-    if not 'sheet' in locals():
+    if 'sheet' not in locals():
         print("Couldn't find a paper sheet in the picture!")
         sys.exit()
 
     approx = np.asarray([x[0] for x in sheet.astype(dtype=np.float32)])
 
     # tl has the smallest sum, br- the biggest
-    top_left = min(approx, key=lambda t: t[0] + t[1])
+    top_left =     min(approx, key=lambda t: t[0] + t[1])
     bottom_right = max(approx, key=lambda t: t[0] + t[1])
-    top_right = max(approx, key=lambda t: t[0] - t[1])
-    bottom_left = min(approx, key=lambda t: t[0] - t[1])
+    top_right =    max(approx, key=lambda t: t[0] - t[1])
+    bottom_left =  min(approx, key=lambda t: t[0] - t[1])
 
     max_width = int(max(distance(bottom_right, bottom_left), distance(top_right, top_left)))
     max_height = int(max(distance(top_right, bottom_right), distance(top_left, bottom_left)))
@@ -50,10 +51,10 @@ def main(image):
     dst = cv2.warpPerspective(image, M, (max_width, max_height))
 
     cv2.drawContours(image, [sheet], -1, (0, 255, 0), 2)
-    cv2.imwrite("with_contours.png", image)
+    cv2.imwrite("output_real/1with_contours.png", image)
     dst = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
 
     _, result = cv2.threshold(dst, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    cv2.imwrite("threshold.png", result)
+    cv2.imwrite("output_real/1threshold.png", result)
     return result

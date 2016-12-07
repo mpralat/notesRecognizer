@@ -1,11 +1,8 @@
 import cv2
 import numpy as np
-from skimage.morphology import skeletonize
-from skimage import img_as_ubyte
-from skimage.transform import *
-import matplotlib.pyplot as plt
 from skimage.feature import canny
-import skimage.io
+from skimage.transform import *
+
 
 def draw_lines(hough, image, nlines):
     n_x, n_y = image.shape
@@ -24,7 +21,7 @@ def draw_lines(hough, image, nlines):
                int(y0 - (n_x + n_y) * np.cos(theta)))
         cv2.line(draw_im, pt1, pt2, (0, 0, 255), 2)
 
-    cv2.imwrite("lines.png", draw_im)
+    cv2.imwrite("output_real/1lines.png", draw_im)
 
 
 def horizontal_lines(result):
@@ -34,7 +31,7 @@ def horizontal_lines(result):
     sobeled = cv2.dilate(sobeled, kernel=np.ones((1, 7), np.uint8), iterations=1)
     # sobeled = cv2.erode(sobeled, kernel=np.ones((1,7), np.uint8), iterations=1)
 
-    cv2.imwrite("sobeled.png", sobeled)
+    cv2.imwrite("output_real/1sobeled.png", sobeled)
     kernel = cv2.getStructuringElement(ksize=(int(sobeled.shape[1] / 60), 1), shape=cv2.MORPH_RECT)
     vertical_lines = cv2.morphologyEx(sobeled, cv2.MORPH_OPEN, kernel)
     # vertical_lines = cv2.dilate(vertical_lines, kernel=(2, 2))
@@ -43,7 +40,7 @@ def horizontal_lines(result):
     vertical_lines = cv2.Sobel(vertical_lines, cv2.CV_64F, 0, 1, ksize=5)
     vertical_lines = cv2.morphologyEx(vertical_lines, op=cv2.MORPH_CLOSE, kernel=(2, 2))
 
-    cv2.imwrite("lines_horizontal2.png", vertical_lines)
+    cv2.imwrite("output_real/1lines_horizontal2.png", vertical_lines)
 
     # # vertical_lines = cv2.threshold(vertical_lines, 0, 255, cv2.THRESH_TOZERO_INV)
     # vertical_lines = vertical_lines.astype(dtype=bool).astype(int)
@@ -55,14 +52,14 @@ def horizontal_lines(result):
     # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     flag, b = cv2.threshold(gray, 160, 255, cv2.THRESH_BINARY)
-    cv2.imwrite("1tresh.jpg", b)
+    cv2.imwrite("output_real/1tresh.jpg", b)
 
     element = np.ones((3, 3))
     b = cv2.erode(b, element)
-    cv2.imwrite("2erodedtresh.jpg", b)
+    cv2.imwrite("output_real/12erodedtresh.jpg", b)
 
     edges = cv2.Canny(b, 10, 100, apertureSize=3)
-    cv2.imwrite("3Canny.jpg", edges)
+    cv2.imwrite("output_real/13Canny.jpg", edges)
 
     hough = cv2.HoughLines(edges, 1, np.pi / 150, 200)
     print(len(hough))
