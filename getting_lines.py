@@ -3,8 +3,11 @@ import numpy as np
 from skimage.feature import canny
 from skimage.transform import *
 
+LINES_DISTANCE_THRESHOLD = 20
+
 
 def draw_lines(hough, image, nlines):
+    all_lines = set()
     n_x, n_y = image.shape
     # convert to color image so that you can see the lines
     draw_im = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
@@ -19,9 +22,35 @@ def draw_lines(hough, image, nlines):
                int(y0 + (n_x + n_y) * np.cos(theta)))
         pt2 = (int(x0 - (n_x + n_y) * (-np.sin(theta))),
                int(y0 - (n_x + n_y) * np.cos(theta)))
-        cv2.line(draw_im, pt1, pt2, (0, 0, 255), 2)
 
+        all_lines.add(int((pt1[1] + pt2[1]) / 2))
+        cv2.line(draw_im, pt1, pt2, (0, 0, 255), 2)
     cv2.imwrite("output_real/1lines.png", draw_im)
+
+    chunks = []
+    lines = []
+    all_lines = sorted(all_lines)
+    for current_line in all_lines:
+        # If current line is far away from last detected line
+        if lines and abs(lines[-1] - current_line) > LINES_DISTANCE_THRESHOLD:
+            if len(lines) >= 5:
+                # Consider it the start of the next chunk.
+                # If <5 - not enough lines detected. Probably an anomaly - reject.
+                chunks.append((lines[0], lines[-1]))
+            lines.clear()
+        lines.append(current_line)
+
+    # Process the last line
+    if len(lines) >= 5:
+        if abs(lines[-2] - lines[-1]) <= LINES_DISTANCE_THRESHOLD:
+            chunks.append((lines[0], lines[-1]))
+
+    # Draw the chunks
+    for chunk in chunks:
+        cv2.line(draw_im, (0, chunk[0]), (850, chunk[0]), (0, 255, 255), 2)
+        cv2.line(draw_im, (0, chunk[1]), (850, chunk[1]), (0, 255, 255), 2)
+
+    cv2.imwrite("output_real/1chunks.png", draw_im)
 
 
 def horizontal_lines(result):
