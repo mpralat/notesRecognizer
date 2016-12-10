@@ -12,6 +12,9 @@ class Note:
         self.base = None  # rectangle
 
     def detect_pitch(self):
+        """
+        Detects a pitch of the note
+        """
         attached_lines = []
         for line in self.lines:
             if self.base.y_begin <= line.y_begin and self.base.y_end >= line.y_end:

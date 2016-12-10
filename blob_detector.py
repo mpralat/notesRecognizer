@@ -1,10 +1,12 @@
 import cv2
+
 from config import *
 
 
 def detect_blobs(input_image):
     """
-    detects blobs with given parameters.
+    Detects blobs with given parameters.
+
     https://www.learnopencv.com/blob-detection-using-opencv-python-c/
     """
     if VERBOSE:
@@ -17,7 +19,7 @@ def detect_blobs(input_image):
     horizontal_lines = (255 - horizontal_lines)
 
     if SAVING_IMAGES_STEPS:
-        cv2.imwrite("output_real/8a_lines_vertical.png", horizontal_lines)
+        cv2.imwrite("output/8a_lines_vertical.png", horizontal_lines)
 
     im_with_blobs = horizontal_lines
     im_with_blobs = cv2.cvtColor(im_with_blobs, cv2.COLOR_GRAY2BGR)
@@ -40,5 +42,5 @@ def detect_blobs(input_image):
     cv2.drawKeypoints(im_with_blobs, keypoints=keypoints, outImage=im_with_blobs, color=(0, 255, 1), flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     if SAVING_IMAGES_STEPS:
-        cv2.imwrite("output_real/8b_with_blobs.jpg", im_with_blobs)
+        cv2.imwrite("output/8b_with_blobs.jpg", im_with_blobs)
     return keypoints
