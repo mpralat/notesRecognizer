@@ -1,6 +1,7 @@
 import sys
 import cv2
 import numpy as np
+from config import *
 
 
 def distance(point1, point2):
@@ -8,11 +9,14 @@ def distance(point1, point2):
 
 
 def adjust_photo(image):
+    if VERBOSE:
+        print("Adjusting photo.")
     gray = cv2.cvtColor(image.copy(), cv2.COLOR_RGB2GRAY)
-    blur = cv2.GaussianBlur(gray, (11,11), 0)
+    blur = cv2.GaussianBlur(gray, GAUSSIAN_BLUR_KERNEL, 0)
     edged = cv2.Canny(blur, 0, 50)
 
-    cv2.imwrite("output_real/1canny.jpg", edged)
+    if SAVING_IMAGES_STEPS:
+        cv2.imwrite("output_real/1canny.jpg", edged)
 
     _, contours, _ = cv2.findContours(edged, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
@@ -57,5 +61,6 @@ def adjust_photo(image):
 
     _, result = cv2.threshold(dst, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    cv2.imwrite("output_real/3adjusted_photo.png", result)
+    if SAVING_IMAGES_STEPS:
+        cv2.imwrite("output_real/3adjusted_photo.png", result)
     return result
