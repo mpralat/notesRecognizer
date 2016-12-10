@@ -2,6 +2,9 @@ import cv2
 import numpy as np
 from config import *
 
+from chunk import Chunk
+
+
 
 def preprocess_image(image):
     if VERBOSE:
@@ -88,4 +91,4 @@ def get_chunks(input_image):
     all_lines, lines_image_color = detect_lines(hough, thresholded, 80)
     chunks = detect_chunks(all_lines)
     draw_chunks(lines_image_color, chunks)
-    return chunks
+    return [Chunk(chunk[0], chunk[1]) for chunk in chunks]

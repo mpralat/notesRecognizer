@@ -8,9 +8,10 @@ def main():
     image = cv2.imread('input/good/easy3.jpg')
     adjusted_photo = adjust_photo(image)
     chunks = get_chunks(adjusted_photo)
+    lines = chunks[0].get_lines_locations()
+    print(lines)
     blobs = detect_blobs(adjusted_photo)
 
-    # TODO Zmienic funkcje get_chunks zeby zwracala liste klas Chunk, zamiast tupli z wartosia min i max
     # TODO wykrywanie wysokosci nutek
 
 
