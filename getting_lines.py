@@ -8,6 +8,7 @@ from staff import Staff
 def preprocess_image(image):
     """
     Prepares the image for the next transformation. Applies threshold and canny edge detection.
+
     :return: Matrices of image after each step.
     """
     if VERBOSE:
@@ -23,6 +24,7 @@ def preprocess_image(image):
 def detect_lines(hough, image, nlines):
     """
     Detects lines present in the picture and adds ones that are horizontal enough to a list.
+
     :param hough: result of Hough Transform function.
     :param image: Main image
     :param nlines: How many lines we want to process.

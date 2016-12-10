@@ -6,12 +6,13 @@ from photo_adjuster import adjust_photo
 
 
 def main():
-    image = cv2.imread('input/good/easy3.jpg')
+    image = cv2.imread('input/good/medium4.jpg')
     adjusted_photo = adjust_photo(image)
-    chunks = get_staffs(adjusted_photo)
-    lines = chunks[0].get_lines_locations()
-    print(lines)
+    staffs = get_staffs(adjusted_photo)
+    lines = staffs[0].get_lines_locations()
     blobs = detect_blobs(adjusted_photo)
+
+
 
     # TODO wykrywanie wysokosci nutek
 
