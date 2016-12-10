@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-from skimage.feature import canny
-from skimage.transform import *
 
 LINES_DISTANCE_THRESHOLD = 20
 
