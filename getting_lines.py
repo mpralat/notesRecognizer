@@ -43,26 +43,41 @@ def preprocess_image(image):
 
 def detect_lines(hough, image, nlines):
     all_lines = set()
-    n_x, n_y = image.shape
+    width, height = image.shape
     # convert to color image so that you can see the lines
     lines_image_color = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-    print(hough.shape)
-    for ups in hough[:nlines]:
-        rho = ups[0][0]
-        theta = ups[0][1]
-        print("line!")
-        x0 = np.cos(theta) * rho
-        y0 = np.sin(theta) * rho
-        pt1 = (int(x0 + (n_x + n_y) * (-np.sin(theta))),
-               int(y0 + (n_x + n_y) * np.cos(theta)))
-        pt2 = (int(x0 - (n_x + n_y) * (-np.sin(theta))),
-               int(y0 - (n_x + n_y) * np.cos(theta)))
 
-        all_lines.add(int((pt1[1] + pt2[1]) / 2))
-        cv2.line(lines_image_color, pt1, pt2, (0, 0, 255), 2)
+    for result_arr in hough[:nlines]:
+        rho = result_arr[0][0]
+        theta = result_arr[0][1]
+        print("line!")
+        a = np.cos(theta)
+        b = np.sin(theta)
+
+        x0 = a * rho
+        y0 = b * rho
+        shape_sum = width + height
+        x1 = int(x0 + shape_sum * (-b))
+        y1 = int(y0 + shape_sum * a)
+        x2 = int(x0 - shape_sum * (-b))
+        y2 = int(y0 - shape_sum * a)
+
+        # pt1 = (int(x0 + (width + height) * (-np.sin(theta))),
+        #        int(y0 + (width + height) * np.cos(theta)))
+        # pt2 = (int(x0 - (width + height) * (-np.sin(theta))),
+        #        int(y0 - (width + height) * np.cos(theta)))
+
+        start = (x1, y1)
+        end = (x2, y2)
+        diff = y2 - y1
+        if abs(diff) < 10:
+            print("difference " + str(diff))
+            all_lines.add(int((start[1] + end[1]) / 2))
+            cv2.line(lines_image_color, start, end, (0, 0, 255), 2)
 
     cv2.imwrite("output_real/6lines.png", lines_image_color)
-    print(all_lines)
+    print(sorted(all_lines))
+    print(image.shape)
     return all_lines, lines_image_color
 
 
@@ -97,11 +112,11 @@ def draw_chunks(lines_image_color, chunks):
 
 
 def get_chunks(input_image):
-    processed_image, b = preprocess_image(input_image)
+    processed_image, thresholded = preprocess_image(input_image)
     hough = cv2.HoughLines(processed_image, 1, np.pi / 150, 200)
+    # print(hough)
 
-
-    all_lines, lines_image_color = detect_lines(hough, b, 100)
+    all_lines, lines_image_color = detect_lines(hough, thresholded, 80)
     chunks = detect_chunks(all_lines)
     draw_chunks(lines_image_color, chunks)
     return chunks
