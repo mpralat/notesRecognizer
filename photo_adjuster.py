@@ -8,18 +8,20 @@ def distance(point1, point2):
     return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
 
-def main(image):
+def adjust_photo(image):
     gray = cv2.cvtColor(image.copy(), cv2.COLOR_RGB2GRAY)
-
+    # blur = cv2.GaussianBlur(gray, (1, 1), 1000)
     edged = cv2.Canny(gray, 0, 50)
+
+    cv2.imwrite("output_real/canny.jpg", edged)
 
     _, contours, _ = cv2.findContours(edged, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
     for cnt in contours:
         # Douglas Pecker algorithm
-        epsilon = 0.1 * cv2.arcLength(cnt, True)
-        approx = cv2.approxPolyDP(cnt, epsilon, True)
+        epsilon = cv2.arcLength(cnt, True)
+        approx = cv2.approxPolyDP(cnt, 0.02 * epsilon, True)
         if len(approx) == 4:
             sheet = approx
             break
@@ -31,10 +33,10 @@ def main(image):
     approx = np.asarray([x[0] for x in sheet.astype(dtype=np.float32)])
 
     # tl has the smallest sum, br- the biggest
-    top_left =     min(approx, key=lambda t: t[0] + t[1])
+    top_left = min(approx, key=lambda t: t[0] + t[1])
     bottom_right = max(approx, key=lambda t: t[0] + t[1])
-    top_right =    max(approx, key=lambda t: t[0] - t[1])
-    bottom_left =  min(approx, key=lambda t: t[0] - t[1])
+    top_right = max(approx, key=lambda t: t[0] - t[1])
+    bottom_left = min(approx, key=lambda t: t[0] - t[1])
 
     max_width = int(max(distance(bottom_right, bottom_left), distance(top_right, top_left)))
     max_height = int(max(distance(top_right, bottom_right), distance(top_left, bottom_left)))
