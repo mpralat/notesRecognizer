@@ -1,3 +1,5 @@
+import cv2
+from config import *
 class Staff:
     """
     Represents a single staff
