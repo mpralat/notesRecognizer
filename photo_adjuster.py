@@ -9,8 +9,8 @@ def distance(point1, point2):
 
 def adjust_photo(image):
     gray = cv2.cvtColor(image.copy(), cv2.COLOR_RGB2GRAY)
-    # blur = cv2.GaussianBlur(gray, (1, 1), 1000)
-    edged = cv2.Canny(gray, 0, 50)
+    blur = cv2.GaussianBlur(gray, (11,11), 0)
+    edged = cv2.Canny(blur, 0, 50)
 
     cv2.imwrite("output_real/canny.jpg", edged)
 
@@ -51,7 +51,7 @@ def adjust_photo(image):
     M = cv2.getPerspectiveTransform(rectangle, arr)
     dst = cv2.warpPerspective(image, M, (max_width, max_height))
 
-    cv2.drawContours(image, [sheet], -1, (0, 255, 0), 2)
+    cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
     cv2.imwrite("output_real/1with_contours.png", image)
     dst = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
 
