@@ -33,7 +33,7 @@ def adjust_photo(image):
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
     for cnt in contours:
-        # Douglas Pecker algorithm
+        # Douglas Pecker algorithm - reduces the number of points in a curve
         epsilon = cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, 0.02 * epsilon, True)
         if len(approx) == 4:

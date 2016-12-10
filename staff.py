@@ -18,3 +18,4 @@ class Staff:
         for i in range(5):
             lines.append(self.min_range + i * lines_distance)
         return lines
+

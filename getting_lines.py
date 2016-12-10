@@ -6,6 +6,10 @@ from staff import Staff
 
 
 def preprocess_image(image):
+    """
+    Prepares the image for the next transformation. Applies threshold and canny edge detection.
+    :return: Matrices of image after each step.
+    """
     if VERBOSE:
         print("Preprocessing image.")
     gray = image.copy()
@@ -18,12 +22,11 @@ def preprocess_image(image):
 
 def detect_lines(hough, image, nlines):
     """
-    Detects all lines present in the image
-
-    :param hough:
-    :param image:
-    :param nlines:
-    :return:
+    Detects lines present in the picture and adds ones that are horizontal enough to a list.
+    :param hough: result of Hough Transform function.
+    :param image: Main image
+    :param nlines: How many lines we want to process.
+    :return: A list of horizontal lines and an image with lines drawn on it.
     """
     if VERBOSE:
         print("Detecting lines.")
@@ -107,7 +110,6 @@ def draw_staffs(image, staffs):
 def get_staffs(image):
     """
     Returns a list of Staff
-
     :param image: image to get staffs from
     :return: list of Staff
     """
