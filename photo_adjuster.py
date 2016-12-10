@@ -12,7 +12,7 @@ def adjust_photo(image):
     blur = cv2.GaussianBlur(gray, (11,11), 0)
     edged = cv2.Canny(blur, 0, 50)
 
-    cv2.imwrite("output_real/canny.jpg", edged)
+    cv2.imwrite("output_real/1canny.jpg", edged)
 
     _, contours, _ = cv2.findContours(edged, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
@@ -52,10 +52,10 @@ def adjust_photo(image):
     dst = cv2.warpPerspective(image, M, (max_width, max_height))
 
     cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
-    cv2.imwrite("output_real/1with_contours.png", image)
+    cv2.imwrite("output_real/2with_contours.png", image)
     dst = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
 
     _, result = cv2.threshold(dst, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    cv2.imwrite("output_real/1threshold.png", result)
+    cv2.imwrite("output_real/3adjusted_photo.png", result)
     return result

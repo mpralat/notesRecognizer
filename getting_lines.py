@@ -11,7 +11,7 @@ def preprocess_image(image):
     sobeled = cv2.dilate(sobeled, kernel=np.ones((1, 7), np.uint8), iterations=1)
     # sobeled = cv2.erode(sobeled, kernel=np.ones((1,7), np.uint8), iterations=1)
 
-    cv2.imwrite("output_real/1sobeled.png", sobeled)
+    cv2.imwrite("output_real/4sobeled.png", sobeled)
     kernel = cv2.getStructuringElement(ksize=(int(sobeled.shape[1] / 60), 1), shape=cv2.MORPH_RECT)
     vertical_lines = cv2.morphologyEx(sobeled, cv2.MORPH_OPEN, kernel)
     # vertical_lines = cv2.dilate(vertical_lines, kernel=(2, 2))
@@ -20,7 +20,8 @@ def preprocess_image(image):
     vertical_lines = cv2.Sobel(vertical_lines, cv2.CV_64F, 0, 1, ksize=5)
     vertical_lines = cv2.morphologyEx(vertical_lines, op=cv2.MORPH_CLOSE, kernel=(2, 2))
 
-    cv2.imwrite("output_real/1lines_horizontal2.png", vertical_lines)
+    vertical_lines = (255 - vertical_lines)
+    cv2.imwrite("output_real/5lines_horizontal.png", vertical_lines)
 
     # # vertical_lines = cv2.threshold(vertical_lines, 0, 255, cv2.THRESH_TOZERO_INV)
     # vertical_lines = vertical_lines.astype(dtype=bool).astype(int)
@@ -31,15 +32,12 @@ def preprocess_image(image):
     gray = image.copy()
     # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    flag, thresholded = cv2.threshold(gray, 160, 255, cv2.THRESH_BINARY)
-    cv2.imwrite("output_real/1tresh.jpg", thresholded)
+    _, thresholded = cv2.threshold(gray, 160, 255, cv2.THRESH_BINARY)
 
     element = np.ones((3, 3))
     thresholded = cv2.erode(thresholded, element)
-    cv2.imwrite("output_real/12erodedtresh.jpg", thresholded)
 
     edges = cv2.Canny(thresholded, 10, 100, apertureSize=3)
-    cv2.imwrite("output_real/13Canny.jpg", edges)
     return edges, thresholded
 
 
@@ -62,7 +60,9 @@ def detect_lines(hough, image, nlines):
 
         all_lines.add(int((pt1[1] + pt2[1]) / 2))
         cv2.line(lines_image_color, pt1, pt2, (0, 0, 255), 2)
-    cv2.imwrite("output_real/1lines.png", lines_image_color)
+
+    cv2.imwrite("output_real/6lines.png", lines_image_color)
+    print(all_lines)
     return all_lines, lines_image_color
 
 
@@ -93,12 +93,13 @@ def draw_chunks(lines_image_color, chunks):
         cv2.line(lines_image_color, (0, chunk[0]), (850, chunk[0]), (0, 255, 255), 2)
         cv2.line(lines_image_color, (0, chunk[1]), (850, chunk[1]), (0, 255, 255), 2)
 
-    cv2.imwrite("output_real/1chunks.png", lines_image_color)
+    cv2.imwrite("output_real/7chunks.png", lines_image_color)
 
 
 def get_chunks(input_image):
     processed_image, b = preprocess_image(input_image)
     hough = cv2.HoughLines(processed_image, 1, np.pi / 150, 200)
+
 
     all_lines, lines_image_color = detect_lines(hough, b, 100)
     chunks = detect_chunks(all_lines)
