@@ -68,6 +68,9 @@ def detect_blobs(input_image, staffs):
     detector = cv2.SimpleBlobDetector_create(params)
     keypoints = detector.detect(im_with_blobs)
 
+    cv2.drawKeypoints(im_with_blobs, keypoints=keypoints, outImage=im_with_blobs, color=(0, 255, 1),
+                      flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
     if SAVING_IMAGES_STEPS:
         cv2.imwrite("output/8b_with_blobs.jpg", im_with_blobs)
 
@@ -81,13 +84,18 @@ def detect_blobs(input_image, staffs):
     keypoints_staff = np.digitize([key.pt[1] for key in keypoints], bins)
     sorted_notes = sorted(list(zip(keypoints, keypoints_staff)), key=lambda tuple: (tuple[1], tuple[0].pt[0]))
 
-    for idx, tuple in enumerate(sorted_notes):
-        cv2.putText(im_with_blobs, str(idx), (int(tuple[0].pt[0]), int(tuple[0].pt[1])),
-                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=1, color=(255, 0, 0))
+    im_with_numbers = im_with_blobs.copy()
 
+    for idx, tuple in enumerate(sorted_notes):
+        cv2.putText(im_with_numbers, str(idx), (int(tuple[0].pt[0]), int(tuple[0].pt[1])),
+                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=2, color=(255, 0, 0))
+        cv2.putText(im_with_blobs, str(tuple[1]), (int(tuple[0].pt[0]), int(tuple[0].pt[1])),
+                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=2, color=(255, 0, 0))
     if SAVING_IMAGES_STEPS:
-        cv2.imwrite("output/8c_with_numbers.jpg", im_with_blobs)
+        cv2.imwrite("output/8c_with_numbers.jpg", im_with_numbers)
+        cv2.imwrite("output/8d_with_staff_numbers.jpg", im_with_blobs)
 
     if VERBOSE:
         print("Keypoints length : " + str(len(keypoints)))
