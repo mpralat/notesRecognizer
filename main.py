@@ -5,13 +5,13 @@ from photo_adjuster import adjust_photo
 from hu import classify_key
 
 def main():
-    image = cv2.imread('input/good/easy1.jpg')
+    image = cv2.imread('input/good/dark2.jpg')
     adjusted_photo = adjust_photo(image)
     staffs = get_staffs(adjusted_photo)
     lines = staffs[0].get_lines_locations()
 
     classify_key(adjusted_photo, staffs[0])
-    blobs = detect_blobs(adjusted_photo)
+    blobs = detect_blobs(adjusted_photo, staffs)
 
     # TODO wykrywanie wysokosci nutek
 

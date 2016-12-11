@@ -45,10 +45,17 @@ def hu_moments():
 
 
 def log_transform_hu(hu_moment):
+    """
+    Transforms hu moments so they can be easily compared.
+    """
     return -np.sign(hu_moment) * np.log10(np.abs(hu_moment))
 
 
 def classify_key(image, chunk):
+    """
+    Uses Hu moments to classify the clef - violin or bass.
+    :return: A string indicating the key
+    """
     v_moment, b_moment = hu_moments()
     original_key = get_key(image, chunk)
     original_moment = cv2.HuMoments(cv2.moments(original_key)).flatten()
@@ -59,6 +66,7 @@ def classify_key(image, chunk):
 
     print(v_moment, b_moment, original_moment)
     if linalg.norm(v_moment - original_moment) - linalg.norm(b_moment - original_moment) > 0.2:
-        print("bass!")
+        return "bass"
     else:
-        print("violin")
+        return "violin"
+
