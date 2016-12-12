@@ -54,8 +54,8 @@ def detect_blobs(input_image, staffs):
     '''
     Here we enumerate notes.
     '''
-    staff_diff = 3 * (staffs[0].max_range - staffs[0].min_range) / 5
-    bins = [x for sublist in [[staff.min_range - staff_diff, staff.max_range + staff_diff] for staff in staffs] for x in
+    staff_diff = 3 / 5 * (staffs[0].max_range - staffs[0].min_range)
+    bins = [x for sublist in [[chunk.min_range - staff_diff, chunk.max_range + staff_diff] for chunk in staffs] for x in
             sublist]
 
     keypoints_staff = np.digitize([key.pt[1] for key in keypoints], bins)
