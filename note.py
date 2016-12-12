@@ -33,7 +33,7 @@ def extract_notes(blobs, staffs, image):
     for blob in blobs:
         if blob[1] % 2 == 1:
             staff_no = int((blob[1] - 1) / 2)
-            notes.append(Note(staff_no, staffs[staff_no], blob[0], image))
+            notes.append(Note(staff_no, staffs, blob[0], image))
     return notes
 
 
@@ -52,11 +52,11 @@ class Note:
     """
     Represents a single note
     """
-    def __init__(self, staff_no, staff, blob, image):
-        self.position_on_staff = self.detect_position_on_staff(staff, blob)
+    def __init__(self, staff_no, staffs, blob, image):
+        self.position_on_staff = self.detect_position_on_staff(staffs[staff_no], blob)
         self.staff_no = staff_no
         self.center = blob.pt
-        self.key, self.pitch = self.detect_pitch(image, staff, self.position_on_staff)
+        self.key, self.pitch = self.detect_pitch(image, staffs[0], self.position_on_staff)
 
     def detect_position_on_staff(self, staff, blob):
         distances_from_lines = []
