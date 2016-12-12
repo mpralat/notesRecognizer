@@ -5,7 +5,7 @@ from photo_adjuster import adjust_photo
 
 
 def main():
-    image = cv2.imread('input/good/dark2.jpg')
+    image = cv2.imread('input/good/medium1.jpg')
     adjusted_photo = adjust_photo(image)
     staffs = get_staffs(adjusted_photo)
     blobs = detect_blobs(adjusted_photo, staffs)

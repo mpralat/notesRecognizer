@@ -14,28 +14,6 @@ def detect_blobs(input_image, staffs):
         print("Detecting blobs.")
     im_with_blobs = input_image.copy()
 
-    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    # im_with_blobs = cv2.morphologyEx(im_with_blobs, cv2.MORPH_OPEN, kernel)
-    # cv2.imwrite("output/10_im_filled_holes.png", im_with_blobs)
-
-    #############################################
-    # des = cv2.bitwise_not(im_with_blobs)
-    # _, contours, _ = cv2.findContours(des, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-    #
-    # contour_list = []
-    # for contour in contours:
-    #     approx = cv2.approxPolyDP(contour, 0.005 * cv2.arcLength(contour, True), True)
-    #     area = cv2.contourArea(contour)
-    #     if (len(approx) > 8) & (area > 80) & (area < 200):
-    #         contour_list.append(contour)
-    #
-    # for cnt in contour_list:
-    #     cv2.drawContours(des, [cnt], 0, 255, -1)
-    #
-    # im_with_blobs = cv2.bitwise_not(des)
-    # cv2.imwrite("output/10_im_filled_holes.png", im_with_blobs)
-    #############################################
-
     im_inv = (255 - im_with_blobs)
     kernel = cv2.getStructuringElement(ksize=(1, int(im_inv.shape[0] / 500)), shape=cv2.MORPH_RECT)
     horizontal_lines = cv2.morphologyEx(im_inv, cv2.MORPH_OPEN, kernel)
