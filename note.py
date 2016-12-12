@@ -62,7 +62,7 @@ def extract_notes(blobs, staffs, image):
     for blob in blobs:
         if blob[1] % 2 == 1:
             staff_no = int((blob[1] - 1) / 2)
-            notes.append(Note(staff_no, staffs, blob[0], image, clef))
+            notes.append(Note(staff_no, staffs, blob[0], clef))
     if VERBOSE:
         print('Extracted ' + str(len(notes)) + ' notes.')
     return notes
@@ -83,12 +83,12 @@ class Note:
     """
     Represents a single note
     """
-    def __init__(self, staff_no, staffs, blob, image, clef):
+    def __init__(self, staff_no, staffs, blob, clef):
         self.position_on_staff = self.detect_position_on_staff(staffs[staff_no], blob)
         self.staff_no = staff_no
         self.center = blob.pt
         self.clef = clef
-        self.pitch = self.detect_pitch(image, staffs[0], self.position_on_staff)
+        self.pitch = self.detect_pitch(self.position_on_staff)
 
     def detect_position_on_staff(self, staff, blob):
         distances_from_lines = []
@@ -111,8 +111,8 @@ class Note:
             # Place the note on the line closest to blob's center
             return distances_from_lines[0][0]
 
-    def detect_pitch(self, image, staff, position_on_staff):
-        if classify_clef(image, staff) == 'violin':
+    def detect_pitch(self, position_on_staff):
+        if self.clef == 'violin':
             return violin_key[position_on_staff]
         else:
             return bass_key[position_on_staff]
