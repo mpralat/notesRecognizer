@@ -4,13 +4,7 @@ import cv2
 import numpy as np
 
 from config import *
-
-
-def distance(point1, point2):
-    """
-    Returns distance between two points in cartesian coordinate system.
-    """
-    return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+from util import distance
 
 
 def adjust_photo(image):

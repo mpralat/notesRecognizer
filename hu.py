@@ -1,19 +1,21 @@
 import cv2
-from config import *
 import numpy as np
 from numpy import linalg
 
+from config import *
 
-def get_key(image, chunk):
+
+def get_clef(image, staff):
     """
-    Gets the key from the first chunk.
-    :param chunk: First chunk from the image.
+    Gets the clef from the first staff.
+
+    :param staff: First staff from the image.
     :return:
     """
     width = image.shape[0]
 
-    up = chunk.get_lines_locations()[0] - WINDOW_WIDTH
-    down = chunk.get_lines_locations()[-1] + WINDOW_WIDTH
+    up = staff.get_lines_locations()[0][0] - WINDOW_WIDTH
+    down = staff.get_lines_locations()[0][-1] + WINDOW_WIDTH
     key_width = int((down - up)/1.5)
     i = 0
     while True:
@@ -26,21 +28,20 @@ def get_key(image, chunk):
         i += int(key_width / WINDOW_SHIFT)
 
     if SAVING_IMAGES_STEPS:
-        cv2.imwrite("key.png", window)
+        cv2.imwrite("clef.png", window)
     return window
 
 
 def hu_moments():
     """
     Computes hu moments for sample violin and bass keys.
-    :return: violin and bass keys hu moments
-    """
 
-    violin_key = cv2.imread("key_samples/violin_key.png", 0)
-    bass_key = cv2.imread("key_samples/bass_key2.png", 0)
+    :return: violin and bass clef hu moments
+    """
+    violin_key = cv2.imread("clef_samples/violin_clef.png", 0)
+    bass_key = cv2.imread("clef_samples/bass_clef2.png", 0)
     violin_moment = cv2.HuMoments(cv2.moments(violin_key)).flatten()
     bass_moment = cv2.HuMoments(cv2.moments(bass_key)).flatten()
-
     return violin_moment, bass_moment
 
 
@@ -51,20 +52,23 @@ def log_transform_hu(hu_moment):
     return -np.sign(hu_moment) * np.log10(np.abs(hu_moment))
 
 
-def classify_key(image, chunk):
+def classify_clef(image, staff):
     """
     Uses Hu moments to classify the clef - violin or bass.
-    :return: A string indicating the key
+
+    :return: A string indicating the clef
     """
     v_moment, b_moment = hu_moments()
-    original_key = get_key(image, chunk)
-    original_moment = cv2.HuMoments(cv2.moments(original_key)).flatten()
+    original_clef = get_clef(image, staff)
+    original_moment = cv2.HuMoments(cv2.moments(original_clef)).flatten()
 
     v_moment = log_transform_hu(v_moment)
     b_moment = log_transform_hu(b_moment)
     original_moment = log_transform_hu(original_moment)
 
-    print(v_moment, b_moment, original_moment)
+    # if VERBOSE:
+    #     print(v_moment, b_moment, original_moment)
+
     if linalg.norm(v_moment - original_moment) - linalg.norm(b_moment - original_moment) > 0.2:
         return "bass"
     else:

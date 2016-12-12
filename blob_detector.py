@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
+
 from config import *
-import operator
 
 
 def detect_blobs(input_image, staffs):
@@ -51,9 +51,8 @@ def detect_blobs(input_image, staffs):
 
     im_with_blobs = vertical_lines
     im_with_blobs = cv2.cvtColor(im_with_blobs, cv2.COLOR_GRAY2BGR)
-    cv2.imwrite("output/9_im_before_blobbing.png", im_with_blobs)
 
-    # Set up the SimpleBlobdetector with default parameters.
+    # Set up the SimpleBlobDetector with default parameters.
     params = cv2.SimpleBlobDetector_Params()
     params.filterByArea = True
     params.minArea = 225
@@ -78,19 +77,19 @@ def detect_blobs(input_image, staffs):
     Here we enumerate notes.
     '''
     staff_diff = 3 * (staffs[0].max_range - staffs[0].min_range) / 5
-    bins = [x for sublist in [[chunk.min_range - staff_diff, chunk.max_range + staff_diff] for chunk in staffs] for x in
+    bins = [x for sublist in [[staff.min_range - staff_diff, staff.max_range + staff_diff] for staff in staffs] for x in
             sublist]
 
     keypoints_staff = np.digitize([key.pt[1] for key in keypoints], bins)
-    sorted_notes = sorted(list(zip(keypoints, keypoints_staff)), key=lambda tuple: (tuple[1], tuple[0].pt[0]))
+    sorted_notes = sorted(list(zip(keypoints, keypoints_staff)), key=lambda tup: (tup[1], tup[0].pt[0]))
 
     im_with_numbers = im_with_blobs.copy()
 
-    for idx, tuple in enumerate(sorted_notes):
-        cv2.putText(im_with_numbers, str(idx), (int(tuple[0].pt[0]), int(tuple[0].pt[1])),
+    for idx, tup in enumerate(sorted_notes):
+        cv2.putText(im_with_numbers, str(idx), (int(tup[0].pt[0]), int(tup[0].pt[1])),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=2, color=(255, 0, 0))
-        cv2.putText(im_with_blobs, str(tuple[1]), (int(tuple[0].pt[0]), int(tuple[0].pt[1])),
+        cv2.putText(im_with_blobs, str(tup[1]), (int(tup[0].pt[0]), int(tup[0].pt[1])),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=2, color=(255, 0, 0))
     if SAVING_IMAGES_STEPS:
@@ -100,4 +99,4 @@ def detect_blobs(input_image, staffs):
     if VERBOSE:
         print("Keypoints length : " + str(len(keypoints)))
 
-    return keypoints, sorted_notes
+    return sorted_notes

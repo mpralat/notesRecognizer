@@ -98,7 +98,7 @@ def draw_staffs(image, staffs):
     Draws staffs on the image.
 
     :param image: image to write staffs onto
-    :param staffs: list of Staff
+    :param staffs: list of Staff to draw
     """
     # Draw the chunks
     width = image.shape[0]
