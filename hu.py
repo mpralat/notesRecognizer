@@ -1,4 +1,5 @@
 import cv2
+from config import *
 import numpy as np
 from numpy import linalg
 
@@ -12,15 +13,17 @@ def get_clef(image, staff):
     :param staff: First staff from the image.
     :return:
     """
+    i = 0
     width = image.shape[0]
 
-    up = staff.get_lines_locations()[0][0] - WINDOW_WIDTH
-    down = staff.get_lines_locations()[0][-1] + WINDOW_WIDTH
-    key_width = int((down - up)/1.5)
-    i = 0
+    window_width = int(2 / 5 * (staff.max_range - staff.min_range))
+
+    up = staff.lines_location[0] - window_width
+    down = staff.lines_location[-1] + window_width
+    key_width = int((down - up) / 2)
     while True:
         window = image[up:down, i:i + key_width]
-        if window.sum() / window.size < 255 * WHITE_PIXELS_PERCENTAGE:
+        if window.sum() / window.size < int(255 * WHITE_PIXELS_PERCENTAGE):
             break
         if i + key_width > width:
             print("No key detected!")
@@ -69,8 +72,11 @@ def classify_clef(image, staff):
     # if VERBOSE:
     #     print(v_moment, b_moment, original_moment)
 
-    if linalg.norm(v_moment - original_moment) - linalg.norm(b_moment - original_moment) > 0.2:
-        return "bass"
-    else:
+    print(v_moment, b_moment, original_moment)
+    print(linalg.norm(v_moment - original_moment), linalg.norm(b_moment - original_moment))
+    if linalg.norm(v_moment - original_moment) < linalg.norm(b_moment - original_moment):
+        print("violin")
         return "violin"
-
+    else:
+        print("bass")
+        return "bass"
