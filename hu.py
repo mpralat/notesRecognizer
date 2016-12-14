@@ -2,8 +2,8 @@ import cv2
 from config import *
 import numpy as np
 from numpy import linalg
-
 from config import *
+from skimage.measure import structural_similarity as ssim
 
 
 def get_clef(image, staff):
@@ -20,7 +20,7 @@ def get_clef(image, staff):
 
     up = staff.lines_location[0] - window_width
     down = staff.lines_location[-1] + window_width
-    key_width = int((down - up) / 2)
+    key_width = int((down - up) / 1.3)
     while True:
         window = image[up:down, i:i + key_width]
         if window.sum() / window.size < int(255 * WHITE_PIXELS_PERCENTAGE):
@@ -45,7 +45,7 @@ def hu_moments():
     bass_key = cv2.imread("clef_samples/bass_clef2.png", 0)
     violin_moment = cv2.HuMoments(cv2.moments(violin_key)).flatten()
     bass_moment = cv2.HuMoments(cv2.moments(bass_key)).flatten()
-    return violin_moment, bass_moment
+    return log_transform_hu(violin_moment), log_transform_hu(bass_moment)
 
 
 def log_transform_hu(hu_moment):
@@ -61,19 +61,28 @@ def classify_clef(image, staff):
 
     :return: A string indicating the clef
     """
-    v_moment, b_moment = hu_moments()
+
+    violin_key = cv2.imread("clef_samples/clef.png", 0)
+    bass_key = cv2.imread("clef_samples/bass_clef_2.png", 0)
     original_clef = get_clef(image, staff)
+
+    v_moment, b_moment = hu_moments()
+    v_moment = v_moment[:3]
+    b_moment = b_moment[:3]
+
+
     original_moment = cv2.HuMoments(cv2.moments(original_clef)).flatten()
-
-    v_moment = log_transform_hu(v_moment)
-    b_moment = log_transform_hu(b_moment)
     original_moment = log_transform_hu(original_moment)
-
+    original_moment = original_moment[:3]
     # if VERBOSE:
     #     print(v_moment, b_moment, original_moment)
 
-    print(v_moment, b_moment, original_moment)
-    print(linalg.norm(v_moment - original_moment), linalg.norm(b_moment - original_moment))
+    # print(v_moment, b_moment, original_moment)
+    # print(linalg.norm(v_moment - original_moment), linalg.norm(b_moment - original_moment))
+
+    v_difference = sum([j - i for i, j in zip(v_moment, original_moment)])
+    b_difference = sum([j - i for i, j in zip(b_moment, original_moment)])
+    print(v_difference, b_difference)
     if linalg.norm(v_moment - original_moment) < linalg.norm(b_moment - original_moment):
         print("violin")
         return "violin"

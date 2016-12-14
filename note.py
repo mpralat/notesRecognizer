@@ -74,11 +74,11 @@ def draw_notes_pitch(image, notes):
     for note in notes:
         cv2.putText(im_with_pitch, note.pitch, (int(note.center[0]) - 5, int(note.center[1]) + 35),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=1, color=(255, 255, 0))
+                    fontScale=1.5, color=(255, 0, 0))
     cv2.imwrite('output/9_with_pitch.png', im_with_pitch)
 
 
-# noinspection PyMethodMayBeStatic
+
 class Note:
     """
     Represents a single note

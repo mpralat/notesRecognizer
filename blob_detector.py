@@ -45,7 +45,7 @@ def detect_blobs(input_image, staffs):
     detector = cv2.SimpleBlobDetector_create(params)
     keypoints = detector.detect(im_with_blobs)
 
-    cv2.drawKeypoints(im_with_blobs, keypoints=keypoints, outImage=im_with_blobs, color=(0, 255, 1),
+    cv2.drawKeypoints(im_with_blobs, keypoints=keypoints, outImage=im_with_blobs, color=(0, 0, 255),
                       flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     if SAVING_IMAGES_STEPS:
@@ -66,10 +66,10 @@ def detect_blobs(input_image, staffs):
     for idx, tup in enumerate(sorted_notes):
         cv2.putText(im_with_numbers, str(idx), (int(tup[0].pt[0]), int(tup[0].pt[1])),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=2, color=(255, 0, 0))
+                    fontScale=1, color=(255, 0, 0))
         cv2.putText(im_with_blobs, str(tup[1]), (int(tup[0].pt[0]), int(tup[0].pt[1])),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=2, color=(255, 0, 0))
+                    fontScale=1, color=(255, 0, 0))
     if SAVING_IMAGES_STEPS:
         cv2.imwrite("output/8c_with_numbers.jpg", im_with_numbers)
         cv2.imwrite("output/8d_with_staff_numbers.jpg", im_with_blobs)
