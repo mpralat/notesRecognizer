@@ -1,9 +1,9 @@
+import argparse
+
 from blob_detector import detect_blobs
 from getting_lines import get_staffs
 from note import *
 from photo_adjuster import adjust_photo
-import argparse
-import os
 
 
 def parse():

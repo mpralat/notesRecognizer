@@ -1,15 +1,15 @@
 import cv2
-from config import *
 import numpy as np
 from numpy import linalg
+
 from config import *
-from skimage.measure import structural_similarity as ssim
 
 
 def get_clef(image, staff):
     """
     Gets the clef from the first staff.
 
+    :param image: image to get the clef from
     :param staff: First staff from the image.
     :return:
     """
@@ -31,7 +31,7 @@ def get_clef(image, staff):
         i += int(key_width / WINDOW_SHIFT)
 
     if SAVING_IMAGES_STEPS:
-        cv2.imwrite("clef.png", window)
+        cv2.imwrite("output/7clef.png", window)
     return window
 
 
@@ -61,31 +61,20 @@ def classify_clef(image, staff):
 
     :return: A string indicating the clef
     """
-
-    violin_key = cv2.imread("clef_samples/clef.png", 0)
-    bass_key = cv2.imread("clef_samples/bass_clef_2.png", 0)
     original_clef = get_clef(image, staff)
 
     v_moment, b_moment = hu_moments()
     v_moment = v_moment[:3]
     b_moment = b_moment[:3]
 
-
     original_moment = cv2.HuMoments(cv2.moments(original_clef)).flatten()
     original_moment = log_transform_hu(original_moment)
     original_moment = original_moment[:3]
-    # if VERBOSE:
-    #     print(v_moment, b_moment, original_moment)
 
-    # print(v_moment, b_moment, original_moment)
-    # print(linalg.norm(v_moment - original_moment), linalg.norm(b_moment - original_moment))
-
-    v_difference = sum([j - i for i, j in zip(v_moment, original_moment)])
-    b_difference = sum([j - i for i, j in zip(b_moment, original_moment)])
-    print(v_difference, b_difference)
+    # v_difference = sum([j - i for i, j in zip(v_moment, original_moment)])
+    # b_difference = sum([j - i for i, j in zip(b_moment, original_moment)])
+    # print("Hu moments differences: " + str(v_difference) + ' ' + str(b_difference))
     if linalg.norm(v_moment - original_moment) < linalg.norm(b_moment - original_moment):
-        print("violin")
         return "violin"
     else:
-        print("bass")
         return "bass"

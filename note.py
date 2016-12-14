@@ -78,7 +78,7 @@ def draw_notes_pitch(image, notes):
     cv2.imwrite('output/9_with_pitch.png', im_with_pitch)
 
 
-
+# noinspection PyMethodMayBeStatic
 class Note:
     """
     Represents a single note

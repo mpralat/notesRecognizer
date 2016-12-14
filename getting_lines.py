@@ -59,7 +59,7 @@ def detect_lines(hough, image, nlines):
             cv2.line(lines_image_color, start, end, (0, 0, 255), 2)
 
     if SAVING_IMAGES_STEPS:
-        cv2.imwrite("output/6lines.png", lines_image_color)
+        cv2.imwrite("output/5lines.png", lines_image_color)
 
     return all_lines, lines_image_color
 
@@ -80,7 +80,7 @@ def detect_staffs(all_lines):
         # If current line is far away from last detected line
         if lines and abs(lines[-1] - current_line) > LINES_DISTANCE_THRESHOLD:
             if len(lines) >= 5:
-                # Consider it the start of the next chunk.
+                # Consider it the start of the next staff.
                 # If <5 - not enough lines detected. Probably an anomaly - reject.
                 staffs.append((lines[0], lines[-1]))
             lines.clear()
@@ -100,13 +100,13 @@ def draw_staffs(image, staffs):
     :param image: image to write staffs onto
     :param staffs: list of Staff to draw
     """
-    # Draw the chunks
+    # Draw the staffs
     width = image.shape[0]
     for staff in staffs:
         cv2.line(image, (0, staff[0]), (width, staff[0]), (0, 255, 255), 2)
         cv2.line(image, (0, staff[1]), (width, staff[1]), (0, 255, 255), 2)
     if SAVING_IMAGES_STEPS:
-        cv2.imwrite("output/7chunks.png", image)
+        cv2.imwrite("output/6staffs.png", image)
 
 
 def get_staffs(image):
